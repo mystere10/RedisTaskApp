@@ -33,6 +33,19 @@ app.get('/', (req, res) => {
   })
 })
 
+app.post('/task/add', (req, res)=>{
+  const task = req.body.task;
+
+  client.lpush('task', task, (err, reply) => {
+    if(err){
+      console.log(err)
+    }else{
+      console.log('Task added...')
+      res.redirect('/');
+    }
+  })
+})
+
 app.listen(3000);
 console.log('server started on port 3000');
 
