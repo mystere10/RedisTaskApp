@@ -26,9 +26,12 @@ app.get('/', (req, res) => {
   const title = "Task list"
 
   client.lrange('task', 0, -1, (err, reply) => {
-    res.render('index', {
-      title: title,
-      tasks: reply
+    client.hgetall('call', (err, call) => {
+      res.render('index', {
+        title: title,
+        tasks: reply,
+        call: call
+      })
     })
   })
 })
@@ -60,6 +63,24 @@ app.post('/task/delete', (req, res) => {
       }
     }
     res.redirect('/')
+  })
+})
+
+app.post('/call/add', (req, res)=>{
+  const newCall = {};
+
+  newCall.name = req.body.name;
+  newCall.company = req.body.company;
+  newCall.phone = req.body.phone;
+  newCall.time = req.body.time;
+
+  client.hmset('call', ['name', newCall.name, 'company', newCall.company, 'phone', newCall.phone, 'time', newCall.time], (err, reply) => {
+    if(err){
+      console.log(err);
+    }else{
+      console.log(reply)
+      res.redirect('/')
+    }
   })
 })
 
