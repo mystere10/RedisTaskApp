@@ -46,6 +46,23 @@ app.post('/task/add', (req, res)=>{
   })
 })
 
+app.post('/task/delete', (req, res) => {
+  const taskToDel = req.body.tasks;
+
+  client.lrange('task', 0, -1, (err, reply) => {
+    for(let i=0; i < reply.length; i++){
+      if(taskToDel.indexOf(reply[i]) > -1){
+        client.lrem('task', 0, reply[i], () => {
+          if(err){
+            console.log(err)
+          }
+        })
+      }
+    }
+    res.redirect('/')
+  })
+})
+
 app.listen(3000);
 console.log('server started on port 3000');
 
